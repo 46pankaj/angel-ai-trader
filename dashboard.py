@@ -10,19 +10,15 @@ import pyotp
 
 # Replace with your real secret key from Angel One
 
+api_key = st.secrets["ANGEL_API_KEY"]
+client_id = st.secrets["ANGEL_CLIENT_ID"]
+client_password = st.secrets["ANGEL_PASSWORD"]
+totp_secret = st.secrets["ANGEL_TOTP_SECRET"]
 
+# 🔑 Generate TOTP and create session
 totp = pyotp.TOTP(totp_secret).now()
-
-# Load environment variables (managed via Streamlit Secrets)
-api_key = os.getenv("ANGEL_API_KEY")
-access_token = os.getenv("ANGEL_ACCESS_TOKEN")
-client_id = os.getenv("ANGEL_CLIENT_ID")
-client_password = os.getenv("ANGEL_PASSWORD")
-totp_secret = os.getenv("ANGEL_TOTP_SECRET")  # recommended way via .env
-
-# Initialize SmartAPI
 smart_api = SmartConnect(api_key=api_key)
-smart_api.generateSession(client_id, client_password, access_token)
+session_data = smart_api.generateSession(client_id, client_password, totp)
 
 # Watchlist
 WATCHLIST = ["RELIANCE.NS", "INFY.NS", "HDFCBANK.NS"]
