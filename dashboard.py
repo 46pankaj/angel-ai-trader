@@ -12,6 +12,7 @@ api_key = st.secrets["ANGEL_API_KEY"]
 client_id = st.secrets["ANGEL_CLIENT_ID"]
 client_password = st.secrets["ANGEL_PASSWORD"]
 totp_secret = st.secrets["ANGEL_TOTP_SECRET"]
+access_token = st.secrets["ANGEL_ACCESS_TOKEN"]
 
 # 🔑 Generate TOTP and create session
 totp = pyotp.TOTP(totp_secret).now()
