@@ -24,9 +24,14 @@ def get_historical_data():
     """
     try:
         ticker = yf.Ticker(SYMBOL)
-        return ticker.history(period="1y")
+        df = ticker.history(period="1y")
+        if df.empty:
+            st.warning(f"No data available for {SYMBOL}")
+            return pd.DataFrame()
+        st.success(f"Successfully fetched data for {SYMBOL}")
+        return df
     except Exception as e:
-        st.error(f"Failed to fetch historical data: {e}")
+        st.error(f"Failed to fetch historical data for {SYMBOL}: {str(e)}")
         return pd.DataFrame()
 
 def fetch_nse_option_chain():
@@ -55,7 +60,7 @@ else:
     st.warning("No historical data available")
 
 # Generate signal and strategy
-if not df.empty and 'ema_short' in df.columns and 'ema_long' in df.columns:
+if not df.empty and 'ema_short' in df.columns and 'ema_long' in df.columns and 'rsi' in df.columns:
     try:
         signal = generate_signal(df.iloc[-1])
         st.markdown(f"### 📌 Latest Signal: `{signal}`")
