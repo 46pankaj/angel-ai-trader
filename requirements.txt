@@ -1,4 +1,6 @@
 streamlit
 pandas
 yfinance
-requests
+smartapi-python==1.2.2  # Specify version for consistency
+twisted
+pyOpenSSL
