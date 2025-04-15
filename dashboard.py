@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-import yfinance as yf
+import yfinance as yfinance
 import smartapi
 from signal_generator import add_indicators, generate_signal
 from risk_management import check_risk_limits
@@ -98,7 +98,7 @@ if trading_enabled and not df.empty:
         if st.button("Execute Buy Order"):
             place_order(selected_symbol + "24JANFUT", 50, "MARKET", "BUY")
         if st.button("Execute Sell Order"):
-            place_order(selected_symbol + "24JANFUT", 50, "MARKET", "SELL")
+            place_order(selected_symbol + "24JANFUT", "MARKET", "SELL")
     else:
         st.error("Risk limits exceeded")
 else:
