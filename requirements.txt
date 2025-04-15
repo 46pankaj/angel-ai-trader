@@ -1,4 +1,5 @@
 streamlit
 pandas
 yfinance
-smartapi-python==1.2.2  # Try a specific version known to work
+smartapi-python==1.2.2  # Specify version to ensure compatibility
+twisted
