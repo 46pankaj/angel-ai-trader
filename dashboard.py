@@ -7,6 +7,7 @@ from risk_management import check_risk_limits
 from strategy_generator import generate_strategy
 import os
 import pyotp
+import yfinance as yf
 
 # Replace with your real secret key from Angel One
 
