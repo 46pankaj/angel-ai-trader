@@ -14,7 +14,7 @@ client_id = os.getenv("ANGEL_CLIENT_ID")
 client_password = os.getenv("ANGEL_PASSWORD")
 
 # Initialize SmartAPI
-smart_api = smartapi.SmartConnect(api_key=api_key)
+smart_api = SmartConnect(api_key=api_key)
 smart_api.generateSession(client_id, client_password, access_token)
 
 # Watchlist
