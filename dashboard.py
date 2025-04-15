@@ -1,12 +1,12 @@
 import streamlit as st
 import pandas as pd
+import yfinance as yf
 from signal_generator import add_indicators, generate_signal
-from data_fetcher import get_historical_data
-from options_chain_analyzer import fetch_nse_option_chain
-import config
+from risk_management import check_risk_limits
+from strategy_generator import generate_strategy
 
-st.set_page_config(layout="wide")
-st.title("📈 AI Trading Dashboard")
+st.set_page_config(page_title="Angel AI Trader", layout="wide")
+st.title("📈 Angel One AI Options Trading Dashboard")
 
 # Sidebar toggles
 st.sidebar.header("⚙️ Settings")
