@@ -2,31 +2,20 @@ import streamlit as st
 import pandas as pd
 import yfinance as yf
 import smartapi
-import tweepy
-from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from signal_generator import add_indicators, generate_signal
 from risk_management import check_risk_limits
 from strategy_generator import generate_strategy
 import os
 
-# Load environment variables (use Streamlit secrets or local .env file)
+# Load environment variables (managed via Streamlit Secrets)
 api_key = os.getenv("ANGEL_API_KEY")
 access_token = os.getenv("ANGEL_ACCESS_TOKEN")
 client_id = os.getenv("ANGEL_CLIENT_ID")
 client_password = os.getenv("ANGEL_PASSWORD")
-twitter_api_key = os.getenv("TWITTER_API_KEY")
-twitter_api_secret = os.getenv("TWITTER_API_SECRET")
-twitter_access_token = os.getenv("TWITTER_ACCESS_TOKEN")
-twitter_access_token_secret = os.getenv("TWITTER_ACCESS_TOKEN_SECRET")
 
-# Initialize APIs
+# Initialize SmartAPI
 smart_api = smartapi.SmartConnect(api_key=api_key)
 smart_api.generateSession(client_id, client_password, access_token)
-
-auth = tweepy.OAuthHandler(twitter_api_key, twitter_api_secret)
-auth.set_access_token(twitter_access_token, twitter_access_token_secret)
-twitter_api = tweepy.API(auth)
-analyzer = SentimentIntensityAnalyzer()
 
 # Watchlist
 WATCHLIST = ["RELIANCE.NS", "INFY.NS", "HDFCBANK.NS"]
@@ -34,6 +23,9 @@ WATCHLIST = ["RELIANCE.NS", "INFY.NS", "HDFCBANK.NS"]
 # Fetch historical data
 @st.cache_data
 def get_historical_data(symbol):
+    """
+    Fetch historical stock data using yfinance.
+    """
     try:
         ticker = yf.Ticker(symbol)
         df = ticker.history(period="1d", interval="1h")
@@ -45,18 +37,11 @@ def get_historical_data(symbol):
         st.error(f"Failed to fetch data for {symbol}: {str(e)}")
         return pd.DataFrame()
 
-# Fetch sentiment
-def get_sentiment(symbol):
-    try:
-        tweets = twitter_api.search_tweets(q=f"{symbol} -filter:retweets", lang="en", count=50)
-        sentiment_scores = [analyzer.polarity_scores(tweet.text)["compound"] for tweet in tweets]
-        return sum(sentiment_scores) / len(sentiment_scores) if sentiment_scores else 0
-    except Exception as e:
-        st.error(f"Failed to fetch sentiment for {symbol}: {str(e)}")
-        return 0
-
 # Place order (manual trigger)
 def place_order(symbol, quantity, order_type, transaction_type):
+    """
+    Place a buy or sell order via SmartAPI.
+    """
     try:
         order_params = {
             "variety": "NORMAL",
@@ -87,17 +72,19 @@ selected_symbol = st.sidebar.selectbox("Select Symbol", WATCHLIST)
 
 # Fetch and process data
 df = get_historical_data(selected_symbol)
-sentiment = get_sentiment(selected_symbol)
 
 if not df.empty:
-    df = add_indicators(df, sentiment)
-    if 'ema_short' in df.columns and 'ema_long' in df.columns:
-        st.line_chart(df[['Close', 'ema_short', 'ema_long']])
-    else:
-        st.error("Indicator columns missing")
+    try:
+        df = add_indicators(df)
+        if 'ema_short' in df.columns and 'ema_long' in df.columns:
+            st.line_chart(df[['Close', 'ema_short', 'ema_long']])
+        else:
+            st.error("Indicator columns (ema_short, ema_long) missing")
+    except Exception as e:
+        st.error(f"Error adding indicators: {e}")
 
     signal = generate_signal(df.iloc[-1])
-    st.markdown(f"### 📌 Latest Signal: `{signal}` (Sentiment: {sentiment:.2f})")
+    st.markdown(f"### 📌 Latest Signal: `{signal}`")
     strategy = generate_strategy(signal)
     st.markdown(f"### 📋 Strategy: `{strategy}`")
 else:
