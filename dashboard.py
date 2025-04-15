@@ -1,16 +1,13 @@
 import streamlit as st
 import pandas as pd
-import yfinance as yfinance
 from SmartApi.smartConnect import SmartConnect
 from signal_generator import add_indicators, generate_signal
 from risk_management import check_risk_limits
 from strategy_generator import generate_strategy
 import os
 import pyotp
-import yfinance as yf
 
 # Replace with your real secret key from Angel One
-
 api_key = st.secrets["ANGEL_API_KEY"]
 client_id = st.secrets["ANGEL_CLIENT_ID"]
 client_password = st.secrets["ANGEL_PASSWORD"]
@@ -24,18 +21,39 @@ session_data = smart_api.generateSession(client_id, client_password, totp)
 # Watchlist
 WATCHLIST = ["RELIANCE.NS", "INFY.NS", "HDFCBANK.NS"]
 
-# Fetch historical data
+# Fetch historical data from Angel One API
 @st.cache_data
 def get_historical_data(symbol):
     try:
-        ticker = yf.Ticker(symbol)
-        df = ticker.history(period="1d", interval="1h")
-        if df.empty:
-            st.warning(f"No data available for {symbol}")
+        # Fetch token for symbol (NSE example)
+        symbol_token = smart_api.getScriptCode("NSE", symbol)
+        
+        if not symbol_token:
+            st.warning(f"No token found for {symbol}")
             return pd.DataFrame()
-        return df
+
+        # Fetch candle data for the symbol
+        params = {
+            "exchange": "NSE",
+            "symboltoken": symbol_token,
+            "interval": "ONE_DAY",
+            "fromdate": "2024-04-01 09:15",
+            "todate": "2024-04-15 15:30"
+        }
+
+        response = smart_api.getCandleData(params)
+
+        if response['status']:
+            # Convert response data to DataFrame
+            candles = response['data']
+            df = pd.DataFrame(candles, columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
+            df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')  # Convert timestamp to readable format
+            return df
+        else:
+            st.warning(f"Failed to fetch data for {symbol}: {response.get('message')}")
+            return pd.DataFrame()
     except Exception as e:
-        st.error(f"Failed to fetch data for {symbol}: {str(e)}")
+        st.error(f"Error fetching data for {symbol}: {str(e)}")
         return pd.DataFrame()
 
 # Place order (manual trigger)
@@ -44,7 +62,7 @@ def place_order(symbol, quantity, order_type, transaction_type):
         order_params = {
             "variety": "NORMAL",
             "tradingsymbol": symbol,
-            "symboltoken": "YOUR_SYMBOL_TOKEN",
+            "symboltoken": "YOUR_SYMBOL_TOKEN",  # Replace with correct symbol token
             "exchange": "NSE",
             "ordertype": order_type,
             "producttype": "FUTURE" if "FUT" in symbol else "OPTION",
@@ -75,7 +93,7 @@ if not df.empty:
     try:
         df = add_indicators(df)
         if 'ema_short' in df.columns and 'ema_long' in df.columns:
-            st.line_chart(df[['Close', 'ema_short', 'ema_long']])
+            st.line_chart(df[['close', 'ema_short', 'ema_long']])
         else:
             st.error("Indicator columns (ema_short, ema_long) missing")
     except Exception as e:
