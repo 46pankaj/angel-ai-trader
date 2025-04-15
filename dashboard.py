@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import yfinance as yfinance
-import smartapi
+from smartapi.smartConnect import SmartConnect
 from signal_generator import add_indicators, generate_signal
 from risk_management import check_risk_limits
 from strategy_generator import generate_strategy
