@@ -5,8 +5,8 @@ from signal_generator import add_indicators, generate_signal
 from risk_management import check_risk_limits
 from strategy_generator import generate_strategy
 
-# Define SYMBOL (replace with actual symbol or use a config file)
-SYMBOL = "NIFTY"  # Example symbol, update as needed
+# Define SYMBOL (use '^NSEI' for NIFTY 50 on yfinance, or e.g., 'RELIANCE.NS' for Reliance)
+SYMBOL = "^NSEI"
 
 # Streamlit page configuration
 st.set_page_config(page_title="Angel AI Trader", layout="wide")
