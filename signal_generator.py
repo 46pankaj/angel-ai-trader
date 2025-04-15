@@ -1,7 +1,11 @@
 import ta
 
 def add_indicators(df):
+    if df is not None and not df.empty and 'Close' in df.columns:
     df['ema_short'] = ta.trend.ema_indicator(df['Close'], window=5)
+else:
+    st.error("Error: DataFrame is empty or missing 'Close' column.")
+    st.stop()
     df['ema_long'] = ta.trend.ema_indicator(df['Close'], window=20)
     df['rsi'] = ta.momentum.rsi(df['Close'], window=14)
     return df
