@@ -6,12 +6,19 @@ from signal_generator import add_indicators, generate_signal
 from risk_management import check_risk_limits
 from strategy_generator import generate_strategy
 import os
+import pyotp
+
+# Replace with your real secret key from Angel One
+
+
+totp = pyotp.TOTP(totp_secret).now()
 
 # Load environment variables (managed via Streamlit Secrets)
 api_key = os.getenv("ANGEL_API_KEY")
 access_token = os.getenv("ANGEL_ACCESS_TOKEN")
 client_id = os.getenv("ANGEL_CLIENT_ID")
 client_password = os.getenv("ANGEL_PASSWORD")
+totp_secret = os.getenv("ANGEL_TOTP_SECRET")  # recommended way via .env
 
 # Initialize SmartAPI
 smart_api = SmartConnect(api_key=api_key)
