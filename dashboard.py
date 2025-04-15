@@ -23,9 +23,6 @@ WATCHLIST = ["RELIANCE.NS", "INFY.NS", "HDFCBANK.NS"]
 # Fetch historical data
 @st.cache_data
 def get_historical_data(symbol):
-    """
-    Fetch historical stock data using yfinance.
-    """
     try:
         ticker = yf.Ticker(symbol)
         df = ticker.history(period="1d", interval="1h")
@@ -39,14 +36,11 @@ def get_historical_data(symbol):
 
 # Place order (manual trigger)
 def place_order(symbol, quantity, order_type, transaction_type):
-    """
-    Place a buy or sell order via SmartAPI.
-    """
     try:
         order_params = {
             "variety": "NORMAL",
             "tradingsymbol": symbol,
-            "symboltoken": "YOUR_SYMBOL_TOKEN",  # Replace with actual token from Scrip Master
+            "symboltoken": "YOUR_SYMBOL_TOKEN",
             "exchange": "NSE",
             "ordertype": order_type,
             "producttype": "FUTURE" if "FUT" in symbol else "OPTION",
@@ -98,7 +92,7 @@ if trading_enabled and not df.empty:
         if st.button("Execute Buy Order"):
             place_order(selected_symbol + "24JANFUT", 50, "MARKET", "BUY")
         if st.button("Execute Sell Order"):
-            place_order(selected_symbol + "24JANFUT", "MARKET", "SELL")
+            place_order(selected_symbol + "24JANFUT", 50, "MARKET", "SELL")
     else:
         st.error("Risk limits exceeded")
 else:
