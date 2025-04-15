@@ -8,3 +8,4 @@ autobahn
 twisted
 logzero
 websocket-client
+pyotp
