@@ -43,20 +43,26 @@ def fetch_nse_option_chain():
 st.subheader("📊 Stock Chart")
 df = get_historical_data()
 if not df.empty:
-    df = add_indicators(df)
-    if 'ema_short' in df.columns and 'ema_long' in df.columns:
-        st.line_chart(df[['Close', 'ema_short', 'ema_long']])
-    else:
-        st.error("Indicator columns (ema_short, ema_long) missing")
+    try:
+        df = add_indicators(df)
+        if 'ema_short' in df.columns and 'ema_long' in df.columns:
+            st.line_chart(df[['Close', 'ema_short', 'ema_long']])
+        else:
+            st.error("Indicator columns (ema_short, ema_long) missing")
+    except Exception as e:
+        st.error(f"Error adding indicators: {e}")
 else:
     st.warning("No historical data available")
 
 # Generate signal and strategy
-if not df.empty:
-    signal = generate_signal(df.iloc[-1])
-    st.markdown(f"### 📌 Latest Signal: `{signal}`")
-    strategy = generate_strategy(signal)
-    st.markdown(f"### 📋 Strategy: `{strategy}`")
+if not df.empty and 'ema_short' in df.columns and 'ema_long' in df.columns:
+    try:
+        signal = generate_signal(df.iloc[-1])
+        st.markdown(f"### 📌 Latest Signal: `{signal}`")
+        strategy = generate_strategy(signal)
+        st.markdown(f"### 📋 Strategy: `{strategy}`")
+    except Exception as e:
+        st.error(f"Error generating signal or strategy: {e}")
 else:
     st.warning("No data available for signal generation")
 
@@ -79,9 +85,12 @@ else:
 if trading_enabled:
     st.success("✅ Auto trading is ENABLED")
     if not df.empty:
-        risk_status = check_risk_limits(df.iloc[-1])
-        if not risk_status:
-            st.error("Risk limits exceeded")
+        try:
+            risk_status = check_risk_limits(df.iloc[-1])
+            if not risk_status:
+                st.error("Risk limits exceeded")
+        except Exception as e:
+            st.error(f"Error checking risk limits: {e}")
 else:
     st.warning("⚠️ Auto trading is DISABLED")
 
