@@ -6,3 +6,4 @@ openai
 smartapi-python
 autobahn
 twisted
+logzero
