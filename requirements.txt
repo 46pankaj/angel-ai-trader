@@ -6,3 +6,4 @@ pandas
 newsapi-python
 openai
 python-dotenv
+yfinance
