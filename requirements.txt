@@ -1,12 +1,9 @@
-fastapi
-uvicorn
-apscheduler
 streamlit
-pandas
-newsapi-python
 openai
-python-dotenv
+newsapi-python
 yfinance
-setuptools
-numpy==1.24.4
+pandas
 pandas_ta==0.3.14b0
+numpy==1.24.4
+python-dotenv
+setuptools>=65.5.0
