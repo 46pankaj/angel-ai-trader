@@ -8,3 +8,4 @@ openai
 python-dotenv
 yfinance
 pandas_ta
+setuptools
