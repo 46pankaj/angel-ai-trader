@@ -1,5 +1,6 @@
 import yfinance as yf
 import pandas_ta as ta
+import numpy as np
 
 def get_technicals(symbol="^NSEI"):
     df = yf.download(symbol, period="1mo", interval="1d")
