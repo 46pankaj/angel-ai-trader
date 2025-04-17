@@ -1,0 +1,6 @@
+API_KEY = "your_angel_api_key"
+CLIENT_ID = "your_client_id"
+PASSWORD = "your_password"
+PIN = "your_pin"
+REDIRECT_URL = "https://smartapi.angelbroking.com"
+MODE = "paper"  # or "live"
