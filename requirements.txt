@@ -4,3 +4,4 @@ apscheduler
 streamlit
 pandas
 newsapi-python
+openai
