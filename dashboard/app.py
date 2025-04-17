@@ -1,7 +1,14 @@
 import streamlit as st
-from ai.sentiment_analysis import get_sentiment
-from ai.technicals import get_technicals
-from ai.open_interest import analyze_oi
+import sys
+import os
+
+# Add 'ai' module to path if necessary
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'ai'))
+
+from sentiment_analysis import get_sentiment
+from technicals import get_technicals
+from open_interest import analyze_oi
+
 
 # Streamlit header and title
 st.title("📈 AI Trading Platform Dashboard")
