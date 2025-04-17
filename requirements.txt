@@ -3,3 +3,4 @@ uvicorn
 apscheduler
 streamlit
 pandas
+newsapi-python
