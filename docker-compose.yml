@@ -1,0 +1,12 @@
+version: '3.8'
+services:
+  trading-app:
+    build: .
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./data:/var/data/trading
+      - ./logs:/var/log/trading
+    environment:
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY}  # Passed via .env
+    restart: unless-stopped
